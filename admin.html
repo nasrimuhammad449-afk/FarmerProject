@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jopo la Usimamizi | Tanzania Farmer Direct Marketplace</title>
+  <!-- Browser Small Icon / Favicon -->
+  <link rel="icon" type="image/png" href="static/favicon.png" />
+  <link rel="shortcut icon" type="image/x-icon" href="static/favicon.ico" />
+  <meta name="description" content="Premium responsive dashboard for Tanzanian cash crops, real-time market prices, weather forecasting, cultivation tips, and interactive USSD simulator." />
+  
+  <!-- Google Fonts (Outfit & Inter) for rich typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap 5 CSS CDN for grid responsiveness -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <!-- Bootstrap Icons CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Premium visual overrides and layout additions for static admin */
+    body {
+      background-color: var(--bg-light, #f8fbf8);
+      font-family: 'Inter', sans-serif;
+    }
+    body.dark-mode {
+      background-color: #0b1f0c !important;
+      color: #e2ebd5 !important;
+    }
+    .admin-dashboard-container {
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    .admin-nav-list {
+      background: white;
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    }
+    body.dark-mode .admin-nav-list {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.1);
+    }
+    body.dark-mode .list-group-item {
+      background: transparent;
+      color: #e2ebd5;
+      border-color: rgba(255,255,255,0.08);
+    }
+    body.dark-mode .list-group-item.active {
+      background: var(--primary, #2e7d32);
+      border-color: var(--primary, #2e7d32);
+      color: white;
+    }
+    .admin-section-card {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.08);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    }
+    body.dark-mode .admin-section-card {
+      background: rgba(255,255,255,0.03);
+      border-color: rgba(255,255,255,0.08);
+    }
+    .text-success-green {
+      color: #2e7d32 !important;
+    }
+    body.dark-mode .text-success-green {
+      color: #81c784 !important;
+    }
+    .hidden {
+      display: none !important;
+    }
+    .badge {
+      padding: 6px 12px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar Navigation header -->
+  <nav class="navbar" id="appNavbar">
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <img src="static/logo.png" alt="Soko la Wakulima Logo" class="header-logo" />
+        <span class="brand-text">Soko la Wakulima</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/">Nyumbani (Home)</a></li>
+      </ul>
+      
+      <div class="profile-wallet-nav">
+        <!-- Dark Mode Toggle -->
+        <div class="theme-switch-container">
+          <label class="theme-switch" for="checkboxThemePortal">
+            <input type="checkbox" id="checkboxThemePortal" onchange="togglePortalDarkMode()" />
+            <span class="slider">
+              <span class="icon-sun">☀️</span>
+              <span class="icon-moon">🌙</span>
+            </span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-wrapper">
+    <div class="admin-dashboard-container py-4 px-3">
+      <!-- Admin Page Header -->
+      <div class="admin-header d-flex justify-content-between align-items-center mb-4 p-3 border-bottom" style="background: rgba(255,255,255,0.05); border-radius: 12px;">
+        <h1 class="h3 mb-0 d-flex align-items-center gap-2">
+          <span><i class="bi bi-shield-lock-fill text-success-green"></i> Jopo la Usimamizi</span>
+          <span class="badge bg-warning text-dark fs-6" style="padding: 6px 12px;">Admin Controls</span>
+        </h1>
+        <button class="btn btn-danger btn-sm fw-bold px-3 py-2" onclick="logoutAdmin()" style="border-radius: 8px;">
+          Funga Jopo (Logout)
+        </button>
+      </div>
+
+      <div class="row g-4">
+        <!-- Sidebar Navigation Tabs -->
+        <div class="col-lg-3 col-md-4">
+          <div class="list-group admin-nav-list shadow-sm border-0 sticky-top" style="top: 80px; z-index: 10; border-radius: 12px; overflow: hidden;">
+            <button onclick="switchAdminTab('overview')" class="list-group-item list-group-item-action admin-tab-btn active d-flex align-items-center gap-2 py-3" id="tab-overview">
+              <i class="bi bi-graph-up-arrow text-success"></i> Ripoti na Takwimu (Overview)
+            </button>
+            <button onclick="switchAdminTab('users')" class="list-group-item list-group-item-action admin-tab-btn d-flex align-items-center gap-2 py-3" id="tab-users">
+              <i class="bi bi-people-fill text-success"></i> Uthibitisho & Watumiaji (Users)
+              <span class="badge bg-danger text-white ms-auto" id="navPendingUsersCount">0</span>
+            </button>
+            <button onclick="switchAdminTab('orders')" class="list-group-item list-group-item-action admin-tab-btn d-flex align-items-center gap-2 py-3" id="tab-orders">
+              <i class="bi bi-box-seam-fill text-success"></i> Maagizo na Usafirishaji (Orders)
+            </button>
+            <button onclick="switchAdminTab('payments')" class="list-group-item list-group-item-action admin-tab-btn d-flex align-items-center gap-2 py-3" id="tab-payments">
+              <i class="bi bi-credit-card-fill text-success"></i> Malipo na Escrow (Payments)
+            </button>
+            <button onclick="switchAdminTab('transporters')" class="list-group-item list-group-item-action admin-tab-btn d-flex align-items-center gap-2 py-3" id="tab-transporters">
+              <i class="bi bi-truck text-success"></i> Wasafirishaji (Transporters)
+            </button>
+            <button onclick="switchAdminTab('disputes')" class="list-group-item list-group-item-action admin-tab-btn d-flex align-items-center gap-2 py-3" id="tab-disputes">
+              <i class="bi bi-scale text-success"></i> Malalamiko & Uamuzi (Mediator)
+              <span class="badge bg-warning text-dark ms-auto" id="navActiveDisputesCount">0</span>
+            </button>
+            <button onclick="switchAdminTab('reviews')" class="list-group-item list-group-item-action admin-tab-btn d-flex align-items-center gap-2 py-3" id="tab-reviews">
+              <i class="bi bi-chat-left-text-fill text-success"></i> Udhibiti wa Maoni (Reviews)
+            </button>
+            <button onclick="switchAdminTab('fraud')" class="list-group-item list-group-item-action admin-tab-btn d-flex align-items-center gap-2 py-3" id="tab-fraud">
+              <i class="bi bi-shield-fill-exclamation text-success"></i> Tahadhari za Usalama (Fraud Alerts)
+              <span class="badge bg-danger text-white ms-auto" id="navFraudAlertsCount">0</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tab Contents Area -->
+        <div class="col-lg-9 col-md-8">
+          
+          <!-- PANEL 1: OVERVIEW & ANALYTICS REPORTS -->
+          <div class="admin-panel" id="panel-overview">
+            <div class="admin-section-card p-4 shadow-sm">
+              <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <h2 class="h4 mb-0 fw-bold"><i class="bi bi-bar-chart-fill text-success-green me-2"></i> Uchambuzi wa Mfumo (System Overview)</h2>
+                <button onclick="exportCSVReport()" class="btn btn-success fw-bold d-flex align-items-center gap-2">
+                  <i class="bi bi-download"></i> Pakua Ripoti (Export CSV)
+                </button>
+              </div>
+
+              <!-- Metrics Grid -->
+              <div class="row g-3 mb-4">
+                <div class="col-sm-6 col-lg-3">
+                  <div class="p-3 border rounded text-center bg-light text-dark">
+                    <span class="fs-4 text-success"><i class="bi bi-cash-coin"></i></span>
+                    <h3 class="h6 text-muted mt-2">Jumla ya Mauzo</h3>
+                    <div class="fs-5 fw-bold text-success" id="statTotalSales">0 TZS</div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                  <div class="p-3 border rounded text-center bg-light text-dark">
+                    <span class="fs-4 text-warning"><i class="bi bi-lock-fill"></i></span>
+                    <h3 class="h6 text-muted mt-2">Escrow Inayoshikiliwa</h3>
+                    <div class="fs-5 fw-bold text-warning" id="statEscrowLocked">0 TZS</div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                  <div class="p-3 border rounded text-center bg-light text-dark">
+                    <span class="fs-4 text-danger"><i class="bi bi-scale"></i></span>
+                    <h3 class="h6 text-muted mt-2">Migogoro Inayoshughulikiwa</h3>
+                    <div class="fs-5 fw-bold text-danger" id="statDisputesCount">0</div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                  <div class="p-3 border rounded text-center bg-light text-dark">
+                    <span class="fs-4 text-danger"><i class="bi bi-shield-slash-fill"></i></span>
+                    <h3 class="h6 text-muted mt-2">Open Fraud Alerts</h3>
+                    <div class="fs-5 fw-bold text-danger" id="statFraudAlerts">0</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row g-4">
+                <!-- Sales by Crop -->
+                <div class="col-lg-6">
+                  <h3 class="h5 fw-bold mb-3 border-bottom pb-2"><i class="bi bi-flower1 text-success-green me-2"></i> Mauzo kwa Kila Aina ya Zao</h3>
+                  <div class="table-responsive">
+                    <table class="table table-sm align-middle table-hover">
+                      <thead>
+                        <tr>
+                          <th>Zao (Crop)</th>
+                          <th>Kiasi (KG)</th>
+                          <th>Mauzo (TZS)</th>
+                          <th>Maagizo</th>
+                        </tr>
+                      </thead>
+                      <tbody id="reportCropSalesBody">
+                        <tr><td colspan="4" class="text-center text-muted">Inapakia...</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                
+                <!-- Regional Sales -->
+                <div class="col-lg-6">
+                  <h3 class="h5 fw-bold mb-3 border-bottom pb-2"><i class="bi bi-geo-alt-fill text-primary me-2"></i> Mauzo kwa Kanda / Mikoa</h3>
+                  <div class="table-responsive">
+                    <table class="table table-sm align-middle table-hover">
+                      <thead>
+                        <tr>
+                          <th>Mkoa (Region)</th>
+                          <th>Jumla ya Thamani</th>
+                          <th>Jumla ya Oda</th>
+                        </tr>
+                      </thead>
+                      <tbody id="reportRegionalSalesBody">
+                        <tr><td colspan="3" class="text-center text-muted">Inapakia...</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL 2: USER VERIFICATION & DIRECTORY -->
+          <div class="admin-panel hidden" id="panel-users">
+            <!-- User Signups Pending Approval -->
+            <div class="admin-section-card p-4 shadow-sm mb-4">
+              <h2 class="h4 fw-bold mb-3"><i class="bi bi-person-badge-fill text-success-green me-2"></i> Maombi Mapya ya Usajili (Pending Verification)</h2>
+              <p class="text-muted small mb-4">Maombi yanayosubiri uhakiki wa vitambulisho vya NIDA au leseni kabla ya kupewa ufikiaji wa soko au usafirishaji.</p>
+              
+              <div class="accordion" id="pendingUsersAccordion">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="headingFarmers">
+                    <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFarmers">
+                      <i class="bi bi-person-fill-exclamation text-primary me-2"></i> Wakulima Wanaosubiri (<span id="cntPendingFarmers">0</span>)
+                    </button>
+                  </h2>
+                  <div id="collapseFarmers" class="accordion-collapse collapse show" data-bs-parent="#pendingUsersAccordion">
+                    <div class="accordion-body table-responsive">
+                      <table class="table table-hover table-sm">
+                        <thead>
+                          <tr>
+                            <th>Jina la Mkulima</th>
+                            <th>Namba ya Simu</th>
+                            <th>Eneo (Mkoa, Wilaya)</th>
+                            <th>Nyaraka ya ID</th>
+                            <th>Hali</th>
+                            <th>Vitendo</th>
+                          </tr>
+                        </thead>
+                        <tbody id="pendingFarmersList">
+                          <tr><td colspan="6" class="text-center text-muted">Hakuna wakulima wanaosubiri.</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="accordion-item mt-3">
+                  <h2 class="accordion-header" id="headingCustomers">
+                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCustomers">
+                      <i class="bi bi-cart-fill text-success me-2"></i> Wanunuzi/Wateja Wanaosubiri (<span id="cntPendingCustomers">0</span>)
+                    </button>
+                  </h2>
+                  <div id="collapseCustomers" class="accordion-collapse collapse" data-bs-parent="#pendingUsersAccordion">
+                    <div class="accordion-body table-responsive">
+                      <table class="table table-hover table-sm">
+                        <thead>
+                          <tr>
+                            <th>Jina la Mnunuzi</th>
+                            <th>Namba ya Simu</th>
+                            <th>Eneo</th>
+                            <th>TIN / Leseni</th>
+                            <th>Hali</th>
+                            <th>Vitendo</th>
+                          </tr>
+                        </thead>
+                        <tbody id="pendingCustomersList">
+                          <tr><td colspan="6" class="text-center text-muted">Hakuna wanunuzi wanaosubiri.</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="accordion-item mt-3">
+                  <h2 class="accordion-header" id="headingTransporters">
+                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransporters">
+                      <i class="bi bi-truck text-warning me-2"></i> Wasafirishaji Wanaosubiri (<span id="cntPendingTransporters">0</span>)
+                    </button>
+                  </h2>
+                  <div id="collapseTransporters" class="accordion-collapse collapse" data-bs-parent="#pendingUsersAccordion">
+                    <div class="accordion-body table-responsive">
+                      <table class="table table-hover table-sm">
+                        <thead>
+                          <tr>
+                            <th>Jina la Msafirishaji</th>
+                            <th>Namba ya Simu</th>
+                            <th>Chombo & Plate</th>
+                            <th>Eneo</th>
+                            <th>Hali</th>
+                            <th>Vitendo</th>
+                          </tr>
+                        </thead>
+                        <tbody id="pendingTransportersList">
+                          <tr><td colspan="6" class="text-center text-muted">Hakuna wasafirishaji wanaosubiri.</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Complete Users Database -->
+            <div class="admin-section-card p-4 shadow-sm">
+              <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-3">
+                <h2 class="h4 fw-bold mb-0"><i class="bi bi-people-fill text-success-green me-2"></i> Orodha Kamili ya Watumiaji (User Directory)</h2>
+                <div class="d-flex gap-2">
+                  <input type="text" id="adminUsersSearch" oninput="filterAdminUsers()" class="form-control form-control-sm" placeholder="Tafuta mtumiaji..." style="width:200px; border-radius:8px;">
+                  <select id="adminUsersRoleFilter" onchange="filterAdminUsers()" class="form-select form-select-sm" style="width:140px; border-radius:8px;">
+                    <option value="all">Wote</option>
+                    <option value="farmer">Wakulima pekee</option>
+                    <option value="customer">Wanunuzi pekee</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                <table class="table table-hover align-middle table-sm">
+                  <thead>
+                    <tr>
+                      <th>Aina</th>
+                      <th>Jina Kamili</th>
+                      <th>Namba ya Simu</th>
+                      <th>Eneo</th>
+                      <th>Salio (Wallet)</th>
+                      <th>Hali (Status)</th>
+                      <th>Vitendo (Actions)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminAllUsersList">
+                    <tr><td colspan="7" class="text-center text-muted">Inapakia orodha...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL 3: ORDERS MANAGEMENT -->
+          <div class="admin-panel hidden" id="panel-orders">
+            <div class="admin-section-card p-4 shadow-sm mb-4">
+              <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-3">
+                <h2 class="h4 fw-bold mb-0"><i class="bi bi-box-seam-fill text-success-green me-2"></i> Udhibiti wa Maagizo (Orders Dashboard)</h2>
+                <div class="d-flex gap-2">
+                  <input type="text" id="adminOrdersSearch" oninput="filterAdminOrdersTable()" class="form-control form-control-sm" placeholder="Tafuta Oda #..." style="width:200px; border-radius:8px;">
+                  <select id="adminOrdersStatusFilter" onchange="filterAdminOrdersTable()" class="form-select form-select-sm" style="width:160px; border-radius:8px;">
+                    <option value="all">Hali Zote (All Statuses)</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="preparing">Preparing</option>
+                    <option value="picked_by_transporter">Picked Up</option>
+                    <option value="on_transit">On Transit</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table table-hover align-middle table-sm">
+                  <thead>
+                    <tr>
+                      <th>Oda #</th>
+                      <th>Mkulima (Farmer)</th>
+                      <th>Mnunuzi (Customer)</th>
+                      <th>Bidhaa (Qty)</th>
+                      <th>Jumla</th>
+                      <th>Hali ya Oda</th>
+                      <th>Escrow</th>
+                      <th>Msafirishaji & Vitendo</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminAllOrdersList">
+                    <tr><td colspan="8" class="text-center text-muted">Inapakia data ya maagizo...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <!-- Manual Transporter Assignment -->
+            <div class="admin-section-card p-4 shadow-sm">
+              <h2 class="h4 fw-bold mb-3"><i class="bi bi-truck text-success-green me-2"></i> Ugawaji wa Wasafirishaji (Transporter Assignment)</h2>
+              <p class="text-muted small">Teua msafirishaji mmoja kati ya walio hai na thabiti ili kukamilisha oda iliyolipwa.</p>
+              <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                  <thead>
+                    <tr>
+                      <th>Oda #</th>
+                      <th>Mkulima (Eneo)</th>
+                      <th>Mnunuzi (Eneo)</th>
+                      <th>Zao & Kiasi</th>
+                      <th>Thamani</th>
+                      <th>Hali ya Malipo</th>
+                      <th>Msafirishaji (Teua)</th>
+                      <th>Kitendo</th>
+                    </tr>
+                  </thead>
+                  <tbody id="unassignedOrdersList">
+                    <tr><td colspan="8" class="text-center text-muted">Inapakia...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL 4: PAYMENTS & ESCROW AUDIT -->
+          <div class="admin-panel hidden" id="panel-payments">
+            <div class="admin-section-card p-4 shadow-sm mb-4">
+              <h2 class="h4 fw-bold mb-3"><i class="bi bi-credit-card-fill text-success-green me-2"></i> Udhibiti wa Fedha na Malipo (Payments & Escrow Overrides)</h2>
+              <p class="text-muted small mb-4">Katika tukio la migogoro migumu, Admin ana uwezo wa kulazimisha malipo yatoke kwenye Escrow kwenda kwa Mkulima (Release) au kurudishwa kwa Mnunuzi (Refund).</p>
+
+              <!-- Fast Action Force Overrides -->
+              <div class="card bg-light border-warning p-3 mb-4 text-dark">
+                <h3 class="h6 fw-bold text-dark mb-3"><i class="bi bi-exclamation-triangle-fill text-warning me-1"></i> Uingiliaji wa Kiotomatiki (Administrative Force Action)</h3>
+                <form id="adminEscrowOverrideForm" onsubmit="executeAdminEscrowAction(event)" class="row g-2 align-items-end">
+                  <div class="col-md-3 col-sm-6">
+                    <label class="small fw-semibold">Oda # (Order ID):</label>
+                    <input type="number" id="overrideOrderId" class="form-control form-control-sm" required placeholder="Mfano: 4">
+                  </div>
+                  <div class="col-md-3 col-sm-6">
+                    <label class="small fw-semibold">Chagua Kitendo:</label>
+                    <select id="overrideAction" class="form-select form-select-sm" required>
+                      <option value="" disabled selected>Chagua kitendo...</option>
+                      <option value="release">Achilia Fedha kwa Mkulima (Release)</option>
+                      <option value="refund">Rudisha Fedha kwa Mnunuzi (Refund)</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4 col-sm-12">
+                    <label class="small fw-semibold">Sababu ya Uamuzi (Reason):</label>
+                    <input type="text" id="overrideReason" class="form-control form-control-sm" required placeholder="Sababu...">
+                  </div>
+                  <div class="col-md-2 col-sm-12">
+                    <button type="submit" class="btn btn-warning btn-sm w-100 fw-bold py-2">Tekeleza</button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Escrow Wallet statistics -->
+              <div class="row g-3 mb-4">
+                <div class="col-sm-6 col-md-3">
+                  <div class="p-3 border rounded text-center bg-light text-dark">
+                    <h4 class="h6 text-muted mb-1">Mizani ya Pochi Zote</h4>
+                    <div class="fs-6 fw-bold text-success" id="pmtTotalBalances">0 TZS</div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                  <div class="p-3 border rounded text-center bg-light text-dark">
+                    <h4 class="h6 text-muted mb-1">Escrow Inayoshikiliwa</h4>
+                    <div class="fs-6 fw-bold text-warning" id="pmtEscrowHeld">0 TZS</div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                  <div class="p-3 border rounded text-center bg-light text-dark">
+                    <h4 class="h6 text-muted mb-1">Escrow Iliyowahi Achiliwa</h4>
+                    <div class="fs-6 fw-bold text-primary" id="pmtEscrowReleased">0 TZS</div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                  <div class="p-3 border rounded text-center bg-light text-dark">
+                    <h4 class="h6 text-muted mb-1">Escrow Iliyowahi Rudishwa</h4>
+                    <div class="fs-6 fw-bold text-danger" id="pmtEscrowRefunded">0 TZS</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Transaction logs -->
+              <h3 class="h5 fw-bold mb-3 border-bottom pb-2"><i class="bi bi-file-text text-success-green me-2"></i> Kumbukumbu za Miamala (Escrow Audit Logs)</h3>
+              <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                <table class="table table-hover table-sm">
+                  <thead>
+                    <tr>
+                      <th>Ref ID</th>
+                      <th>Oda #</th>
+                      <th>Mtumiaji (Role & ID)</th>
+                      <th>Aina ya Muamala</th>
+                      <th>Kiasi (TZS)</th>
+                      <th>Tarehe</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminTransactionsLogsList">
+                    <tr><td colspan="6" class="text-center text-muted">Inapakia kumbukumbu...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL 5: TRANSPORTERS MANAGEMENT -->
+          <div class="admin-panel hidden" id="panel-transporters">
+            <div class="admin-section-card p-4 shadow-sm">
+              <h2 class="h4 fw-bold mb-3"><i class="bi bi-truck text-success-green me-2"></i> Wasafirishaji Waliopo (Transporters Management)</h2>
+              <p class="text-muted small mb-4">Dhibiti, weka active au sitisha (suspend) akaunti za wasafirishaji nchini ili kuhakikisha huduma bora ya ugavi.</p>
+              
+              <div class="table-responsive">
+                <table class="table table-hover align-middle table-sm">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Msafirishaji</th>
+                      <th>Namba ya Simu</th>
+                      <th>Aina ya Gari</th>
+                      <th>Namba ya Gari (Plate)</th>
+                      <th>Eneo la Kazi</th>
+                      <th>Salio</th>
+                      <th>Hali</th>
+                      <th>Uamuzi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminTransportersList">
+                    <tr><td colspan="9" class="text-center text-muted">Inapakia wasafirishaji...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL 6: DISPUTES RESOLVER -->
+          <div class="admin-panel hidden" id="panel-disputes">
+            <div class="admin-section-card p-4 shadow-sm">
+              <h2 class="h4 fw-bold mb-3"><i class="bi bi-scale text-success-green me-2"></i> Malalamiko & Mpatanishi wa Admin</h2>
+              <p class="text-muted small mb-4">
+                Admin ni <strong>mpatanishi</strong> kwa malalamiko kama: bidhaa hazijafikishwa, ubora mbaya wa mazao,
+                msafirishaji bandia, na matatizo ya malipo. Chagua kutoa rejesho au malipo kwa mkulima baada ya kukagua ushahidi.
+              </p>
+              
+              <div class="table-responsive">
+                <table class="table table-hover align-middle table-sm">
+                  <thead>
+                    <tr>
+                      <th>Dispute #</th>
+                      <th>Oda #</th>
+                      <th>Mwanzisha</th>
+                      <th>Aina ya Malalamiko</th>
+                      <th>Mkulima / Mnunuzi</th>
+                      <th>Maelezo</th>
+                      <th>Thamani (TZS)</th>
+                      <th>Hali</th>
+                      <th>Uamuzi wa Admin</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminDisputesList">
+                    <tr><td colspan="9" class="text-center text-muted">Inapakia malalamiko...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL 7: REVIEWS MODERATION -->
+          <div class="admin-panel hidden" id="panel-reviews">
+            <div class="admin-section-card p-4 shadow-sm">
+              <h2 class="h4 fw-bold mb-3"><i class="bi bi-chat-left-text-fill text-success-green me-2"></i> Usimamizi wa Maoni (Reviews Moderation)</h2>
+              <p class="text-muted small mb-4">Kagua, thibitisha au ficha maoni ya wanunuzi ili kuzuia matumizi mabaya ya lugha au maoni ya uongo.</p>
+              
+              <div class="table-responsive">
+                <table class="table table-hover align-middle table-sm">
+                  <thead>
+                    <tr>
+                      <th>Review ID</th>
+                      <th>Oda # (Bidhaa)</th>
+                      <th>Mtoaji Maoni</th>
+                      <th>Mpokea Maoni</th>
+                      <th>Ukadiriaji</th>
+                      <th>Ujumbe</th>
+                      <th>Hali</th>
+                      <th>Udhibiti</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminReviewsList">
+                    <tr><td colspan="8" class="text-center text-muted">Inapakia maoni...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL 8: FRAUD ALERTS -->
+          <div class="admin-panel hidden" id="panel-fraud">
+            <div class="admin-section-card p-4 shadow-sm">
+              <h2 class="h4 fw-bold text-danger mb-3"><i class="bi bi-shield-fill-exclamation text-danger me-2"></i> Tahadhari za Usalama (Fraud Alerts)</h2>
+              <p class="text-muted small mb-3">Mfumo unagundua: maagizo yaliyoghairiwa mengi, namba za simu bandia, akaunti nyingi, malipo ya mashaka, na uthibitisho wa uwasilishaji bandia.</p>
+
+              <div class="row g-2 mb-3" id="fraudSummaryCards">
+                <div class="col-6 col-md-4 col-lg">
+                  <div class="p-2 border rounded small text-center bg-light text-dark">
+                    <div class="fw-bold text-danger" id="fraudCountCancellations">0</div>
+                    <div class="text-muted small">Too many cancelled orders</div>
+                  </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg">
+                  <div class="p-2 border rounded small text-center bg-light text-dark">
+                    <div class="fw-bold text-danger" id="fraudCountFakePhone">0</div>
+                    <div class="text-muted small">Fake phone numbers</div>
+                  </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg">
+                  <div class="p-2 border rounded small text-center bg-light text-dark">
+                    <div class="fw-bold text-danger" id="fraudCountMultipleAccounts">0</div>
+                    <div class="text-muted small">Multiple accounts</div>
+                  </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg">
+                  <div class="p-2 border rounded small text-center bg-light text-dark">
+                    <div class="fw-bold text-danger" id="fraudCountPayments">0</div>
+                    <div class="text-muted small">Suspicious payment activity</div>
+                  </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg">
+                  <div class="p-2 border rounded small text-center bg-light text-dark">
+                    <div class="fw-bold text-danger" id="fraudCountFakeDelivery">0</div>
+                    <div class="text-muted small">Fake delivery reports</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+                <label class="small fw-bold text-muted mb-0">Chuja:</label>
+                <select id="fraudAlertTypeFilter" class="form-select form-select-sm" style="max-width:280px;" onchange="loadFraudTab()">
+                  <option value="">Aina zote (All types)</option>
+                  <option value="excessive_cancellations">Too many cancelled orders</option>
+                  <option value="fake_phone">Fake phone numbers</option>
+                  <option value="multiple_accounts">Multiple accounts</option>
+                  <option value="suspicious_payment">Suspicious payment activity</option>
+                  <option value="fake_delivery_confirmation">Fake delivery reports</option>
+                  <option value="price_manipulation">Price manipulation</option>
+                  <option value="multiple_disputes">Multiple disputes</option>
+                </select>
+              </div>
+              
+              <div class="table-responsive">
+                <table class="table table-hover align-middle table-sm">
+                  <thead>
+                    <tr>
+                      <th>Alert ID</th>
+                      <th>Mtumiaji</th>
+                      <th>Namba ya Simu</th>
+                      <th>Aina ya Kosa</th>
+                      <th>Kiwango cha Hatari</th>
+                      <th>Maelezo kamili ya Mfumo</th>
+                      <th>Hali</th>
+                      <th>Vitendo</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminFraudAlertsList">
+                    <tr><td colspan="8" class="text-center text-muted">Inapakia ripoti za udanganyifu...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Password/Passcode Login Overlay -->
+  <div class="admin-login-overlay" id="adminLoginOverlay">
+    <div class="admin-login-card p-4">
+      <span class="fs-1 text-success"><i class="bi bi-shield-lock-fill"></i></span>
+      <h2 class="h4 fw-bold mt-2">Ingia Kama Admin</h2>
+      <p class="text-muted small">Tafadhali ingiza namba ya siri (Passcode) ili kuona na kudhibiti mifumo yote ya soko la wakulima.</p>
+      
+      <form id="adminLoginForm" onsubmit="handleAdminLoginSubmit(event)">
+        <div class="form-group mb-3 text-start">
+          <label for="adminPasscode" class="small fw-semibold mb-1">Namba ya Siri ya Kuingia:</label>
+          <input type="password" id="adminPasscode" class="form-control" required placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <div class="error-alert alert alert-danger p-2 hidden" id="adminLoginError" style="font-size: 0.85rem;"></div>
+        <button type="submit" class="btn btn-primary btn-block w-100 fw-bold py-2 mt-2" style="border-radius: 8px;">
+          Ingia Sasa (Access Dashboard)
+        </button>
+      </form>
+      
+      <div class="mt-3">
+        <a href="/" class="text-decoration-none text-muted small">← Rudi Nyumbani (Back to Home)</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="main-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <h4>🌾 Soko la Wakulima</h4>
+        <p>Kuunganisha wakulima wa Tanzania na soko bila dalali. Piga huduma yetu ya USSD wakati wowote.</p>
+        <span class="footer-ussd">*384*1234#</span>
+      </div>
+      <div class="footer-links">
+        <h5>Viungo vya Haraka</h5>
+        <ul>
+          <li><a href="/#slideshow-section">Nyumbani</a></li>
+          <li><a href="/#market-prices-section">Mazao Sokoni</a></li>
+          <li><a href="/#logistics-section">Wanunuzi Waliosajiliwa</a></li>
+          <li><a href="/#weather-tips-section">Utabiri wa Hali ya Hewa</a></li>
+          <li><a href="/#market-prices-section">Bei za Masoko</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h5>Rasilimali za Kilimo</h5>
+        <ul>
+          <li><a href="/#">Miongozo ya Kilimo Bora</a></li>
+          <li><a href="/#ussd-simulator-section">Huduma ya USSD (*384*1234#)</a></li>
+          <li><a href="https://www.kilimo.go.tz" target="_blank" rel="noopener noreferrer">Wizara ya Kilimo</a></li>
+          <li><a href="https://www.meteo.go.tz" target="_blank" rel="noopener noreferrer">Mamlaka ya Hali ya Hewa (TMA)</a></li>
+          <li><a href="#footer-contact">Wasiliana Nasi</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact" id="footer-contact">
+        <h5>Mawasiliano</h5>
+        <p>Simu: +255 757 877 587</p>
+        <p>Barua Pepe: info@sokolawakulima.go.tz</p>
+        <p>Morogoro, Tanzania</p>
+
+        <div class="footer-social" aria-label="Social Media">
+          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-bottom-left">
+        &copy; 2026 Soko la Wakulima. Haki zote zimehifadhiwa.
+      </div>
+      <div class="footer-bottom-center">
+        <span class="footer-bottom-center-text">The Website is Designed, Developed and Maintained by  Alharith Co.</span>
+      </div>
+      <div class="footer-bottom-right">
+        Imesanifiwa kwaajili ya Kilimo Kwanza
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Tab switching support
+    window.switchAdminTab = function(tabName) {
+      const panels = document.querySelectorAll('.admin-panel');
+      panels.forEach(p => p.classList.add('hidden'));
+      
+      const selectedPanel = document.getElementById(`panel-${tabName}`);
+      if (selectedPanel) selectedPanel.classList.remove('hidden');
+      
+      const tabBtns = document.querySelectorAll('.admin-tab-btn');
+      tabBtns.forEach(b => b.classList.remove('active'));
+      
+      const selectedBtn = document.getElementById(`tab-${tabName}`);
+      if (selectedBtn) selectedBtn.classList.add('active');
+      
+      loadAdminTab(tabName);
+    };
+
+    // Dark Mode Portal support
+    window.togglePortalDarkMode = function() {
+      const cb = document.getElementById('checkboxThemePortal');
+      if (cb && cb.checked) {
+        document.body.classList.add('dark-mode');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.body.classList.remove('dark-mode');
+        localStorage.setItem('theme', 'light');
+      }
+    };
+
+    // Initialize themes
+    (function() {
+      const savedTheme = localStorage.getItem('theme');
+      const checkbox = document.getElementById('checkboxThemePortal');
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.body.classList.add('dark-mode');
+        if (checkbox) checkbox.checked = true;
+      }
+    })();
+
+    // API fetch helper
+    async function fetchAPI(url, options = {}) {
+      try {
+        const response = await fetch(url, options);
+        if (!response.ok) return null;
+        return await response.json();
+      } catch (e) {
+        console.error("API error:", e);
+        return null;
+      }
+    }
+
+    // =====================================================
+    // CORE ADMIN FUNCTIONS AND LISTENERS
+    // =====================================================
+    let adminAuthed = false;
+
+    function checkAdminAuth() {
+      const isAuthed = localStorage.getItem('admin_authed');
+      const loginOverlay = document.getElementById('adminLoginOverlay');
+      
+      if (isAuthed === 'true') {
+        adminAuthed = true;
+        if (loginOverlay) loginOverlay.classList.add('hidden');
+        loadAdminTab('overview');
+      } else {
+        adminAuthed = false;
+        if (loginOverlay) loginOverlay.classList.remove('hidden');
+      }
+    }
+
+    function handleAdminLoginSubmit(e) {
+      if (e) e.preventDefault();
+      const passcode = document.getElementById('adminPasscode').value;
+      const errorEl = document.getElementById('adminLoginError');
+      const loginOverlay = document.getElementById('adminLoginOverlay');
+      
+      if (passcode === 'admin123') {
+        localStorage.setItem('admin_authed', 'true');
+        adminAuthed = true;
+        if (loginOverlay) loginOverlay.classList.add('hidden');
+        if (errorEl) errorEl.classList.add('hidden');
+        loadAdminTab('overview');
+      } else {
+        if (errorEl) {
+          errorEl.textContent = 'Namba ya siri si sahihi (Incorrect Passcode)!';
+          errorEl.classList.remove('hidden');
+        }
+      }
+    }
+
+    function logoutAdmin() {
+      localStorage.removeItem('admin_authed');
+      adminAuthed = false;
+      location.reload();
+    }
+
+    // Dynamic badge counters
+    async function updateNavBadges() {
+      const pendingData = await fetchAPI('/api/admin/pending-users');
+      if (pendingData) {
+        const countPendingUsers = (pendingData.farmers || []).length + (pendingData.customers || []).length + (pendingData.transporters || []).length;
+        const badgeUsers = document.getElementById('navPendingUsersCount');
+        if (badgeUsers) badgeUsers.textContent = countPendingUsers;
+      }
+      
+      const disputesData = await fetchAPI('/api/admin/disputes');
+      if (disputesData) {
+        const countActiveDisputes = disputesData.pending_count ?? (disputesData.disputes || []).filter(d => d.status === 'pending').length;
+        const badgeDisputes = document.getElementById('navActiveDisputesCount');
+        if (badgeDisputes) badgeDisputes.textContent = countActiveDisputes;
+      }
+      
+      const fraudData = await fetchAPI('/api/admin/fraud-alerts');
+      if (fraudData) {
+        const countActiveFraud = fraudData.summary
+          ? fraudData.summary.active_count
+          : (fraudData.alerts || []).filter(a => a.status === 'active' || a.status === 'investigating').length;
+        const badgeFraud = document.getElementById('navFraudAlertsCount');
+        if (badgeFraud) badgeFraud.textContent = countActiveFraud;
+      }
+    }
+
+    // Dynamic Tab Load Router
+    async function loadAdminTab(tabName) {
+      if (!adminAuthed) return;
+      
+      await updateNavBadges();
+      
+      if (tabName === 'overview') {
+        await loadOverviewTab();
+      } else if (tabName === 'users') {
+        await loadUsersTab();
+      } else if (tabName === 'orders') {
+        await loadOrdersTab();
+      } else if (tabName === 'payments') {
+        await loadPaymentsTab();
+      } else if (tabName === 'transporters') {
+        await loadTransportersTab();
+      } else if (tabName === 'disputes') {
+        await loadDisputesTab();
+      } else if (tabName === 'reviews') {
+        await loadReviewsTab();
+      } else if (tabName === 'fraud') {
+        await loadFraudTab();
+      }
+    }
+
+    // Export CSV report helper
+    window.exportCSVReport = function() {
+      alert("Ripoti ya CSV inaundwa na kupakuliwa kikamilifu!");
+      window.location.href = "/api/admin/reports?format=csv";
+    };
+
+    // =====================================================
+    // SPECIFIC TAB LOADERS & ACTIONS
+    // =====================================================
+
+    // Overview Tab
+    async function loadOverviewTab() {
+      const stats = await fetchAPI('/api/admin/payments/stats');
+      const fraud = await fetchAPI('/api/admin/fraud-alerts');
+      const disputes = await fetchAPI('/api/admin/disputes');
+      
+      if (stats) {
+        const totalSalesEl = document.getElementById('statTotalSales');
+        const escrowLockedEl = document.getElementById('statEscrowLocked');
+        if (totalSalesEl) totalSalesEl.textContent = `${Math.round(stats.escrow_released).toLocaleString()} TZS`;
+        if (escrowLockedEl) escrowLockedEl.textContent = `${Math.round(stats.escrow_held).toLocaleString()} TZS`;
+      }
+      if (disputes) {
+        const disputesCountEl = document.getElementById('statDisputesCount');
+        if (disputesCountEl) disputesCountEl.textContent = (disputes.disputes || []).filter(d => d.status === 'pending').length;
+      }
+      if (fraud) {
+        const fraudCountEl = document.getElementById('statFraudAlerts');
+        if (fraudCountEl) {
+          fraudCountEl.textContent = fraud.summary
+            ? fraud.summary.active_count
+            : (fraud.alerts || []).filter(a => a.status === 'active' || a.status === 'investigating').length;
+        }
+      }
+      
+      const reports = await fetchAPI('/api/admin/reports');
+      if (reports) {
+        const cropBody = document.getElementById('reportCropSalesBody');
+        if (cropBody) {
+          if (!reports.sales_by_crop || reports.sales_by_crop.length === 0) {
+            cropBody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-2">Hakuna data ya mauzo</td></tr>';
+          } else {
+            cropBody.innerHTML = reports.sales_by_crop.map(s => `
+              <tr>
+                <td><strong>${s.crop}</strong></td>
+                <td>${Math.round(s.volume_kg).toLocaleString()} KG</td>
+                <td class="fw-bold text-success">${Math.round(s.sales_tzs).toLocaleString()} TZS</td>
+                <td><span class="badge bg-light text-dark">${s.orders_count}</span></td>
+              </tr>
+            `).join('');
+          }
+        }
+        
+        const regionalBody = document.getElementById('reportRegionalSalesBody');
+        if (regionalBody) {
+          if (!reports.regional_sales || reports.regional_sales.length === 0) {
+            regionalBody.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-2">Hakuna data ya mikoa</td></tr>';
+          } else {
+            regionalBody.innerHTML = reports.regional_sales.map(r => `
+              <tr>
+                <td>📍 <strong>${r.region}</strong></td>
+                <td class="fw-bold text-success">${Math.round(r.sales_tzs).toLocaleString()} TZS</td>
+                <td><span class="badge bg-light text-dark">${r.orders_count}</span></td>
+              </tr>
+            `).join('');
+          }
+        }
+      }
+    }
+
+    // Users Tab
+    let adminCachedUsers = { farmers: [], customers: [] };
+
+    async function loadUsersTab() {
+      const data = await fetchAPI('/api/admin/pending-users');
+      if (data) {
+        const listFarmers = document.getElementById('pendingFarmersList');
+        const listCustomers = document.getElementById('pendingCustomersList');
+        const listTransporters = document.getElementById('pendingTransportersList');
+        
+        const countFarmersEl = document.getElementById('cntPendingFarmers');
+        const countCustomersEl = document.getElementById('cntPendingCustomers');
+        const countTransportersEl = document.getElementById('cntPendingTransporters');
+        
+        if (countFarmersEl) countFarmersEl.textContent = data.farmers.length;
+        if (countCustomersEl) countCustomersEl.textContent = data.customers.length;
+        if (countTransportersEl) countTransportersEl.textContent = data.transporters.length;
+        
+        if (listFarmers) {
+          if (data.farmers.length === 0) {
+            listFarmers.innerHTML = '<tr><td colspan="6" class="text-center text-success py-3">✓ Hakuna wakulima wanaosubiri thibitisho.</td></tr>';
+          } else {
+            listFarmers.innerHTML = data.farmers.map(f => {
+              const docLink = f.document && f.document.startsWith('/static/') 
+                ? `<a href="${f.document}" target="_blank" class="badge bg-info text-decoration-none">👁️ View Document</a>`
+                : f.document 
+                  ? `<span class="badge bg-secondary">ID: ${f.document}</span>`
+                  : '<span class="text-muted">Hakuna</span>';
+              return `
+                <tr>
+                  <td class="fw-bold">${f.first_name} ${f.last_name}</td>
+                  <td><a href="tel:${f.phone_number}" class="text-decoration-none fw-bold" style="color: #ffc107;">${f.phone_number}</a></td>
+                  <td>📍 ${f.region}, ${f.district}</td>
+                  <td>${docLink}</td>
+                  <td><span class="badge bg-warning text-dark">${f.status}</span></td>
+                  <td>
+                    <button onclick="approveUser('${f.phone_number}', 'farmer')" class="btn btn-success btn-sm me-1 fw-bold">Approve</button>
+                    <button onclick="rejectUser('${f.phone_number}', 'farmer')" class="btn btn-danger btn-sm fw-bold">Reject</button>
+                  </td>
+                </tr>
+              `;
+            }).join('');
+          }
+        }
+        
+        if (listCustomers) {
+          if (data.customers.length === 0) {
+            listCustomers.innerHTML = '<tr><td colspan="6" class="text-center text-success py-3">✓ Hakuna wanunuzi wanaosubiri thibitisho.</td></tr>';
+          } else {
+            listCustomers.innerHTML = data.customers.map(c => {
+              const docLink = c.document && c.document.startsWith('/static/') 
+                ? `<a href="${c.document}" target="_blank" class="badge bg-info text-decoration-none">👁️ View Document</a>`
+                : c.document 
+                  ? `<span class="badge bg-secondary">ID: ${c.document}</span>`
+                  : '<span class="text-muted">Hakuna</span>';
+              return `
+                <tr>
+                  <td class="fw-bold">${c.first_name} ${c.last_name} ${c.business_name ? `<br/><small class="text-muted">🏢 ${c.business_name}</small>` : ''}</td>
+                  <td><a href="tel:${c.phone_number}" class="text-decoration-none fw-bold" style="color: #ffc107;">${c.phone_number}</a></td>
+                  <td>📍 ${c.region}, ${c.district}</td>
+                  <td>${docLink}</td>
+                  <td><span class="badge bg-warning text-dark">${c.status}</span></td>
+                  <td>
+                    <button onclick="approveUser('${c.phone_number}', 'customer')" class="btn btn-success btn-sm me-1 fw-bold">Approve</button>
+                    <button onclick="rejectUser('${c.phone_number}', 'customer')" class="btn btn-danger btn-sm fw-bold">Reject</button>
+                  </td>
+                </tr>
+              `;
+            }).join('');
+          }
+        }
+
+        if (listTransporters) {
+          if (data.transporters.length === 0) {
+            listTransporters.innerHTML = '<tr><td colspan="6" class="text-center text-success py-3">✓ Hakuna wasafirishaji wanaosubiri thibitisho.</td></tr>';
+          } else {
+            listTransporters.innerHTML = data.transporters.map(t => `
+              <tr>
+                <td class="fw-bold">${t.first_name} ${t.last_name}</td>
+                <td><a href="tel:${t.phone_number}" class="text-decoration-none fw-bold" style="color: #ffc107;">${t.phone_number}</a></td>
+                <td><strong>${t.vehicle_type}</strong> (${t.license_plate})</td>
+                <td>📍 ${t.region}, ${t.district}</td>
+                <td><span class="badge bg-warning text-dark">${t.status}</span></td>
+                <td>
+                  <button onclick="approveUser('${t.phone_number}', 'transporter')" class="btn btn-success btn-sm me-1 fw-bold">Approve</button>
+                  <button onclick="rejectUser('${t.phone_number}', 'transporter')" class="btn btn-danger btn-sm fw-bold">Reject</button>
+                </td>
+              </tr>
+            `).join('');
+          }
+        }
+      }
+      
+      const usersData = await fetchAPI('/api/admin/users');
+      if (usersData) {
+        adminCachedUsers = { farmers: usersData.farmers || [], customers: usersData.customers || [] };
+        renderAdminUsersTable(adminCachedUsers.farmers.concat(adminCachedUsers.customers));
+      }
+    }
+
+    function renderAdminUsersTable(usersList) {
+      const body = document.getElementById('adminAllUsersList');
+      if (!body) return;
+      if (usersList.length === 0) {
+        body.innerHTML = '<tr><td colspan="7" class="text-center py-3 text-muted">Hakuna watumiaji waliopatikana.</td></tr>';
+        return;
+      }
+      body.innerHTML = usersList.map(u => {
+        const badgeClass = u.status === 'active' ? 'bg-success'
+          : u.status === 'suspended' ? 'bg-danger'
+          : 'bg-secondary';
+        const label = u.role === 'farmer' ? '🧑‍🌾 Mkulima' : '🛒 Mnunuzi';
+        const name = u.role === 'customer' && u.business_name ? `${u.first_name} ${u.last_name} (🏢 ${u.business_name})` : `${u.first_name} ${u.last_name}`;
+        
+        const actionBtn = u.status === 'suspended' 
+          ? `<button onclick="updateUserStatus('${u.phone_number}', '${u.role}', 'active')" class="btn btn-outline-success btn-sm fw-bold px-2 py-1" style="font-size:0.75rem; border-radius:6px;">Unsuspend</button>`
+          : `<button onclick="updateUserStatus('${u.phone_number}', '${u.role}', 'suspended')" class="btn btn-outline-danger btn-sm fw-bold px-2 py-1" style="font-size:0.75rem; border-radius:6px;">Suspend</button>`;
+            
+        return `
+          <tr>
+            <td><span class="badge bg-light text-dark border" style="padding: 6px 12px;">${label}</span></td>
+            <td class="fw-bold">${name}</td>
+            <td><a href="tel:${u.phone_number}" class="text-decoration-none fw-bold" style="color: #ffc107;">${u.phone_number}</a></td>
+            <td>📍 ${u.region}, ${u.district}</td>
+            <td class="fw-bold text-success">${Math.round(u.wallet_balance).toLocaleString()} TZS</td>
+            <td><span class="badge ${badgeClass}" style="padding: 6px 12px;">${u.status}</span></td>
+            <td>
+              <div class="d-flex gap-1">
+                ${actionBtn}
+                <button onclick="deleteUser('${u.role}', ${u.id})" class="btn btn-danger btn-sm fw-bold px-2 py-1" style="font-size:0.75rem; border-radius:6px;">Delete</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    window.filterAdminUsers = function() {
+      const q = document.getElementById('adminUsersSearch').value.toLowerCase();
+      const role = document.getElementById('adminUsersRoleFilter').value;
+      
+      let list = [];
+      if (role === 'all' || role === 'farmer') list = list.concat(adminCachedUsers.farmers);
+      if (role === 'all' || role === 'customer') list = list.concat(adminCachedUsers.customers);
+      
+      if (q) {
+        list = list.filter(u => 
+          u.first_name.toLowerCase().includes(q) || 
+          u.last_name.toLowerCase().includes(q) || 
+          u.phone_number.includes(q) ||
+          (u.business_name && u.business_name.toLowerCase().includes(q))
+        );
+      }
+      renderAdminUsersTable(list);
+    };
+
+    window.approveUser = async function(phoneNumber, role) {
+      if (!confirm(`Je, una uhakika wa kudhibitisha akaunti ya ${role} (${phoneNumber})?`)) return;
+      
+      const response = await fetch('/api/admin/approve-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone_number: phoneNumber, role: role })
+      });
+      
+      if (response.ok) {
+        alert('Akaunti imethibitishwa kikamilifu!');
+        loadUsersTab();
+      } else {
+        alert('Kosa limetokea wakati wa kudhibitisha.');
+      }
+    };
+
+    window.rejectUser = async function(phoneNumber, role) {
+      if (!confirm(`Je, una uhakika wa KUKATAA akaunti ya ${role} (${phoneNumber})?`)) return;
+      
+      const response = await fetch('/api/admin/reject-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone_number: phoneNumber, role: role })
+      });
+      
+      if (response.ok) {
+        alert('Akaunti imekataliwa (Status: inactive).');
+        loadUsersTab();
+      } else {
+        alert('Kosa limetokea wakati wa kukataa.');
+      }
+    };
+
+    window.updateUserStatus = async function(phone, role, status) {
+      if (!confirm(`Je, una uhakika wa kubadili hali ya akaunti kwenda ${status}?`)) return;
+      
+      const response = await fetch('/api/admin/users/status', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone_number: phone, role, status })
+      });
+      
+      if (response.ok) {
+        alert('Hali ya akaunti imesasishwa!');
+        loadUsersTab();
+      } else {
+        alert('Kosa la kusasisha hali.');
+      }
+    };
+
+    window.deleteUser = async function(role, id) {
+      if (!confirm(`Je, una uhakika kabisa wa KUFUTA mtumiaji huyu kutoka kwenye database? Kitendo hiki hakiwezi kufutika!`)) return;
+      
+      const response = await fetch(`/api/admin/users/${role}/${id}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        alert('Mtumiaji amefutwa kikamilifu!');
+        loadUsersTab();
+      } else {
+        alert('Imeshindwa kufuta mtumiaji.');
+      }
+    };
+
+    // Orders Tab
+    let adminCachedOrders = [];
+
+    async function loadOrdersTab() {
+      const data = await fetchAPI('/api/admin/orders');
+      if (data) {
+        adminCachedOrders = data.orders || [];
+        renderAdminOrdersTable(adminCachedOrders);
+      }
+      loadTransporterAssignment();
+    }
+
+    function renderAdminOrdersTable(ordersList) {
+      const body = document.getElementById('adminAllOrdersList');
+      if (!body) return;
+      if (ordersList.length === 0) {
+        body.innerHTML = '<tr><td colspan="8" class="text-center py-3 text-muted">Hakuna maagizo yaliyopatikana.</td></tr>';
+        return;
+      }
+      body.innerHTML = ordersList.map(o => {
+        const badgeClass = o.status === 'completed' ? 'bg-success'
+          : o.status === 'cancelled' ? 'bg-danger'
+          : o.status === 'approved' ? 'bg-info text-dark'
+          : o.status === 'on_transit' ? 'bg-warning text-dark'
+          : 'bg-secondary';
+            
+        const escrowClass = o.escrow_status === 'released' ? 'bg-success'
+          : o.escrow_status === 'refunded' ? 'bg-danger'
+          : o.escrow_status === 'held' ? 'bg-warning text-dark'
+          : 'bg-secondary';
+            
+        const trName = o.transporter_name ? `${o.transporter_name} (${o.license_plate})` : 'Bado';
+        
+        return `
+          <tr>
+            <td class="fw-bold">#${o.id}</td>
+            <td><strong>${o.farmer_name}</strong><br/><small class="text-muted">📍 ${o.farmer_region}</small></td>
+            <td><strong>${o.customer_name}</strong><br/><small class="text-muted">📍 ${o.customer_region}</small></td>
+            <td>${o.product_name} (${Math.round(o.quantity_kg)} kg)</td>
+            <td class="fw-bold text-success">${Math.round(o.total_amount).toLocaleString()} TZS</td>
+            <td><span class="badge ${badgeClass}">${o.status}</span></td>
+            <td><span class="badge ${escrowClass}">${o.escrow_status}</span></td>
+            <td>
+              <div class="d-flex flex-column gap-1">
+                <small class="text-muted" style="font-size:0.75rem;">🚚: ${trName}</small>
+                <select onchange="updateAdminOrderStatus(${o.id}, this.value)" class="form-select form-select-sm" style="width:110px; font-size:0.75rem; padding: 2px; border-radius:6px;">
+                  <option value="">-- Badili Hali --</option>
+                  <option value="approved">Approve</option>
+                  <option value="preparing">Prepare</option>
+                  <option value="on_transit">On Transit</option>
+                  <option value="completed">Complete</option>
+                  <option value="cancelled">Cancel</option>
+                </select>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    window.filterAdminOrdersTable = function() {
+      const q = document.getElementById('adminOrdersSearch').value.toLowerCase();
+      const status = document.getElementById('adminOrdersStatusFilter').value;
+      
+      let list = adminCachedOrders;
+      if (status !== 'all') {
+        list = list.filter(o => o.status === status);
+      }
+      if (q) {
+        list = list.filter(o => 
+          o.id.toString().includes(q) || 
+          o.farmer_name.toLowerCase().includes(q) || 
+          o.customer_name.toLowerCase().includes(q) || 
+          o.product_name.toLowerCase().includes(q)
+        );
+      }
+      renderAdminOrdersTable(list);
+    };
+
+    window.updateAdminOrderStatus = async function(orderId, status) {
+      if (!status) return;
+      if (!confirm(`Je, unataka kubadili hali ya Agizo #${orderId} kwenda '${status}'?`)) return;
+      
+      let escrow_status = undefined;
+      if (status === 'completed') {
+        escrow_status = 'released';
+      } else if (status === 'cancelled') {
+        escrow_status = 'refunded';
+      }
+      
+      const response = await fetch(`/api/admin/orders/${orderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, escrow_status })
+      });
+      
+      if (response.ok) {
+        alert('Agizo limesasishwa kikamilifu!');
+        loadOrdersTab();
+      } else {
+        alert('Imeshindwa kusasisha agizo.');
+      }
+    };
+
+    async function loadTransporterAssignment() {
+      const listUnassigned = document.getElementById('unassignedOrdersList');
+      if (!listUnassigned) return;
+      
+      listUnassigned.innerHTML = '<tr><td colspan="8" class="text-center p-4 text-muted">Inatafuta maagizo...</td></tr>';
+      
+      const ordersData = await fetchAPI('/api/orders');
+      const transportersData = await fetchAPI('/api/transporters/active');
+      
+      if (!ordersData || !transportersData) {
+        listUnassigned.innerHTML = '<tr><td colspan="8" class="text-center text-danger p-4">Kosa la kupakia data ya ugawaji.</td></tr>';
+        return;
+      }
+      
+      const unassignedOrders = (ordersData.orders || []).filter(o => o.status === 'approved' && !o.transporter_id);
+      const activeTransporters = transportersData.transporters || [];
+      
+      if (unassignedOrders.length === 0) {
+        listUnassigned.innerHTML = '<tr><td colspan="8" class="text-center p-4 text-success">✓ Hakuna maagizo yanayosubiri kupangiwa msafirishaji.</td></tr>';
+        return;
+      }
+      
+      listUnassigned.innerHTML = unassignedOrders.map(o => {
+        const trOptions = activeTransporters.map(t => {
+          const isLocal = (t.region === o.farmer_region || t.region === o.customer_region);
+          const localBadge = isLocal ? ' (Karibu)' : '';
+          return `<option value="${t.id}">${t.first_name} ${t.last_name} - ${t.vehicle_type} (${t.license_plate})${localBadge}</option>`;
+        }).join('');
+        
+        const dropdownHtml = activeTransporters.length > 0 
+          ? `<select id="assign_tr_${o.id}" class="form-select form-select-sm" style="font-size: 0.85rem; border-radius: 6px; padding: 4px;">
+               <option value="">-- Teua Msafirishaji --</option>
+               ${trOptions}
+             </select>`
+          : `<span class="text-danger small">Hakuna wasafirishaji verified!</span>`;
+            
+        const btnHtml = activeTransporters.length > 0
+          ? `<button onclick="assignTransporterToOrder(${o.id})" class="btn btn-primary btn-sm fw-bold">Teua</button>`
+          : `<button disabled class="btn btn-secondary btn-sm" style="cursor: not-allowed;">Teua</button>`;
+            
+        return `
+          <tr>
+            <td class="fw-bold">#${o.id}</td>
+            <td><strong>${o.farmer_name || 'Mkulima'}</strong></td>
+            <td><strong>${o.customer_name || 'Mnunuzi'}</strong></td>
+            <td>${o.product_name} (${Math.round(o.quantity_kg)} kg)</td>
+            <td class="fw-bold text-success">${Math.round(o.total_amount).toLocaleString()} TZS</td>
+            <td><span class="badge bg-success">Imethibitishwa</span></td>
+            <td>${dropdownHtml}</td>
+            <td>${btnHtml}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    window.assignTransporterToOrder = async function(orderId) {
+      const selectEl = document.getElementById(`assign_tr_${orderId}`);
+      if (!selectEl) return;
+      const transporterId = selectEl.value;
+      if (!transporterId) {
+        alert('Tafadhali teua msafirishaji kwanza.');
+        return;
+      }
+      
+      if (!confirm(`Je, una uhakika wa kumteua msafirishaji huyu kwa Agizo #${orderId}?`)) return;
+      
+      const response = await fetch('/api/admin/assign-transporter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          order_id: orderId,
+          transporter_id: parseInt(transporterId)
+        })
+      });
+      
+      if (response.ok) {
+        alert('✓ Msafirishaji ameteuliwa kikamilifu!');
+        loadOrdersTab();
+      } else {
+        const err = await response.json();
+        alert(err.error || 'Imeshindwa kuteua msafirishaji.');
+      }
+    };
+
+    // Payments Tab
+    async function loadPaymentsTab() {
+      const stats = await fetchAPI('/api/admin/payments/stats');
+      if (stats) {
+        const pmtBalances = document.getElementById('pmtTotalBalances');
+        const pmtHeld = document.getElementById('pmtEscrowHeld');
+        const pmtReleased = document.getElementById('pmtEscrowReleased');
+        const pmtRefunded = document.getElementById('pmtEscrowRefunded');
+        
+        if (pmtBalances) pmtBalances.textContent = `${Math.round(stats.total_wallet_balance).toLocaleString()} TZS`;
+        if (pmtHeld) pmtHeld.textContent = `${Math.round(stats.escrow_held).toLocaleString()} TZS`;
+        if (pmtReleased) pmtReleased.textContent = `${Math.round(stats.escrow_released).toLocaleString()} TZS`;
+        if (pmtRefunded) pmtRefunded.textContent = `${Math.round(stats.escrow_refunded).toLocaleString()} TZS`;
+      }
+      
+      const txsData = await fetchAPI('/api/admin/payments/transactions');
+      const body = document.getElementById('adminTransactionsLogsList');
+      if (body) {
+        if (!txsData || !txsData.transactions || txsData.transactions.length === 0) {
+          body.innerHTML = '<tr><td colspan="6" class="text-center py-3 text-muted">Hakuna kumbukumbu za miamala</td></tr>';
+        } else {
+          body.innerHTML = txsData.transactions.map(t => {
+            const typeClass = t.transaction_type === 'escrow_hold' ? 'text-warning'
+              : t.transaction_type === 'escrow_release' ? 'text-success'
+              : t.transaction_type === 'refund' ? 'text-danger'
+              : 'text-dark';
+            const userLabel = t.user_type === 'farmer' ? '🧑‍🌾 Mkulima' : '🛒 Mnunuzi';
+            const dateStr = new Date(t.created_at).toLocaleDateString('sw-TZ', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+            return `
+              <tr>
+                <td><code>${t.reference_id}</code></td>
+                <td class="fw-bold">${t.order_id ? `#${t.order_id}` : 'Hakuna'}</td>
+                <td>${userLabel} (ID: ${t.user_id})</td>
+                <td><strong class="${typeClass}">${t.transaction_type}</strong></td>
+                <td class="fw-bold text-success">${Math.round(t.amount).toLocaleString()} TZS</td>
+                <td>${dateStr}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    window.executeAdminEscrowAction = async function(e) {
+      e.preventDefault();
+      const orderId = document.getElementById('overrideOrderId').value;
+      const action = document.getElementById('overrideAction').value;
+      const resolution = document.getElementById('overrideReason').value;
+      
+      if (!confirm(`Je, una uhakika wa kulazimisha kitendo cha '${action}' kwa Agizo #${orderId}? Hatua hii itahamisha fedha kulingana na uamuzi.`)) return;
+      
+      const response = await fetch('/api/admin/payments/action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order_id: parseInt(orderId), action, resolution })
+      });
+      
+      const result = await response.json();
+      if (response.ok) {
+        alert(result.message || 'Escrow override executed successfully!');
+        document.getElementById('adminEscrowOverrideForm').reset();
+        loadPaymentsTab();
+      } else {
+        alert(result.error || 'Failed to execute escrow override.');
+      }
+    };
+
+    // Transporters Tab
+    async function loadTransportersTab() {
+      const data = await fetchAPI('/api/admin/transporters');
+      const body = document.getElementById('adminTransportersList');
+      if (body) {
+        if (!data || !data.transporters || data.transporters.length === 0) {
+          body.innerHTML = '<tr><td colspan="9" class="text-center py-3 text-muted">Hakuna wasafirishaji nchini.</td></tr>';
+        } else {
+          body.innerHTML = data.transporters.map(t => {
+            const badgeClass = t.status === 'active' ? 'bg-success'
+              : t.status === 'inactive' ? 'bg-secondary'
+              : 'bg-danger';
+                
+            const statusToggleBtn = t.status === 'active'
+              ? `<button onclick="updateTransporterStatus('${t.phone_number}', 'inactive')" class="btn btn-outline-warning btn-sm fw-bold px-2 py-1" style="font-size:0.75rem; border-radius:6px;">Deactivate</button>`
+              : `<button onclick="updateTransporterStatus('${t.phone_number}', 'active')" class="btn btn-success btn-sm fw-bold px-2 py-1" style="font-size:0.75rem; border-radius:6px;">Activate</button>`;
+                
+            return `
+              <tr>
+                <td class="fw-bold">#${t.id}</td>
+                <td class="fw-bold">${t.first_name} ${t.last_name}</td>
+                <td><a href="tel:${t.phone_number}" class="text-decoration-none fw-bold" style="color: #ffc107;">${t.phone_number}</a></td>
+                <td><strong>${t.vehicle_type}</strong></td>
+                <td><span class="badge bg-dark">${t.license_plate}</span></td>
+                <td>📍 ${t.region}, ${t.district}</td>
+                <td class="fw-bold text-success">${Math.round(t.wallet_balance).toLocaleString()} TZS</td>
+                <td><span class="badge ${badgeClass}">${t.status}</span></td>
+                <td>
+                  <div class="d-flex gap-1">
+                    ${statusToggleBtn}
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    window.updateTransporterStatus = async function(phone, status) {
+      if (!confirm(`Je, unataka kubadili hali ya msafirishaji ${phone} kuwa '${status}'?`)) return;
+      
+      const response = await fetch('/api/admin/transporters/status', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone_number: phone, status })
+      });
+      
+      if (response.ok) {
+        alert('Transporter status updated successfully!');
+        loadTransportersTab();
+      } else {
+        alert('Failed to update transporter status.');
+      }
+    };
+
+    // Disputes Tab
+    async function loadDisputesTab() {
+      const data = await fetchAPI('/api/admin/disputes');
+      const body = document.getElementById('adminDisputesList');
+      if (body) {
+        if (!data || !data.disputes || data.disputes.length === 0) {
+          body.innerHTML = '<tr><td colspan="9" class="text-center py-3 text-muted">Hakuna malalamiko yanayosubiri</td></tr>';
+        } else {
+          body.innerHTML = data.disputes.map(d => {
+            const statusClass = d.status === 'resolved' ? 'bg-success'
+              : d.status === 'dismissed' ? 'bg-secondary'
+              : 'bg-warning text-dark';
+            const resolutionText = d.resolution ? `<small class="text-muted d-block">Uamuzi: ${d.resolution}</small>` : '';
+            const reporterLabel = d.reporter_type === 'customer' ? '🛒 Mnunuzi' : '🧑‍🌾 Mkulima';
+            const reporterName = d.reporter_type === 'customer' ? d.customer_name : d.farmer_name;
+            const issueBadge = d.issue_label_sw || d.issue_type || 'Malalamiko';
+
+            const actionButtons = d.status === 'pending'
+              ? `<div class="d-flex flex-column gap-1">
+                   <button onclick="resolveDispute(${d.id}, 'refund')" class="btn btn-danger btn-sm fw-bold py-1 px-2" style="font-size:0.75rem; border-radius:6px;">Rejesha (Refund)</button>
+                   <button onclick="resolveDispute(${d.id}, 'release')" class="btn btn-success btn-sm fw-bold py-1 px-2" style="font-size:0.75rem; border-radius:6px;">Achilia (Release)</button>
+                   <button onclick="resolveDispute(${d.id}, 'dismiss')" class="btn btn-secondary btn-sm fw-bold py-1 px-2" style="font-size:0.75rem; border-radius:6px;">Ondoa (Dismiss)</button>
+                 </div>`
+              : `<span class="text-success fw-bold">✓ Imeshughulikiwa</span>`;
+
+            return `
+              <tr>
+                <td class="fw-bold">#${d.id}</td>
+                <td class="fw-bold">#${d.order_id}<br/><small class="text-muted">${d.product_name || ''}</small></td>
+                <td><strong>${reporterName}</strong><br/><small>${reporterLabel}</small></td>
+                <td><span class="badge bg-danger text-white" style="font-size:0.75rem; padding:6px 10px;">${issueBadge}</span></td>
+                <td>🧑‍🌾 ${d.farmer_name}<br/>🛒 ${d.customer_name}</td>
+                <td><div style="max-width:200px; font-size:0.85rem; max-height:80px; overflow-y:auto;">${d.reason}</div></td>
+                <td class="fw-bold text-success">${Math.round(d.total_amount).toLocaleString()} TZS</td>
+                <td>
+                  <span class="badge ${statusClass}">${d.status}</span>
+                  ${resolutionText}
+                </td>
+                <td>${actionButtons}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    window.resolveDispute = async function(disputeId, action) {
+      const resolution = prompt("Maelezo ya uamuzi wa mpatanishi (Admin mediator notes):", `Uamuzi wa Admin — ${action}`);
+      if (resolution === null) return;
+      
+      const response = await fetch(`/api/admin/disputes/${disputeId}/resolve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, resolution })
+      });
+      
+      if (response.ok) {
+        alert('Mgogoro umesuluhishwa kwa uamuzi wa ' + action);
+        loadDisputesTab();
+      } else {
+        const err = await response.json();
+        alert(err.error || 'Imeshindwa kusuluhisha mgogoro.');
+      }
+    };
+
+    // Reviews Tab
+    async function loadReviewsTab() {
+      const data = await fetchAPI('/api/admin/reviews');
+      const body = document.getElementById('adminReviewsList');
+      if (body) {
+        if (!data || !data.reviews || data.reviews.length === 0) {
+          body.innerHTML = '<tr><td colspan="8" class="text-center py-3 text-muted">Hakuna maoni yoyote.</td></tr>';
+        } else {
+          body.innerHTML = data.reviews.map(r => {
+            const stars = '⭐'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+            const statusClass = r.status === 'approved' ? 'bg-success'
+              : r.status === 'flagged' ? 'bg-warning text-dark'
+              : 'bg-danger';
+                
+            return `
+              <tr>
+                <td class="fw-bold">#${r.id}</td>
+                <td><strong>#${r.order_id}</strong> (${r.product_name})</td>
+                <td>${r.reviewer_name || 'Mnunuzi'} (${r.reviewer_type})</td>
+                <td>${r.reviewee_name || 'Mkulima'} (${r.reviewee_type})</td>
+                <td class="text-warning">${stars}</td>
+                <td><div style="max-width:180px; font-size:0.85rem;">${r.comment || ''}</div></td>
+                <td><span class="badge ${statusClass}">${r.status}</span></td>
+                <td>
+                  <div class="d-flex gap-1">
+                    <button onclick="moderateReview(${r.id}, 'approved')" class="btn btn-outline-success btn-sm px-2 py-1" style="font-size:0.75rem; border-radius:6px;">Approve</button>
+                    <button onclick="moderateReview(${r.id}, 'flagged')" class="btn btn-outline-warning btn-sm px-2 py-1" style="font-size:0.75rem; border-radius:6px;">Flag</button>
+                    <button onclick="moderateReview(${r.id}, 'hidden')" class="btn btn-outline-danger btn-sm px-2 py-1" style="font-size:0.75rem; border-radius:6px;">Hide</button>
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    window.moderateReview = async function(reviewId, status) {
+      const response = await fetch(`/api/admin/reviews/${reviewId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      
+      if (response.ok) {
+        alert('Review moderated successfully!');
+        loadReviewsTab();
+      } else {
+        alert('Failed to moderate review.');
+      }
+    };
+
+    // Fraud Alerts Tab
+    function updateFraudSummaryCards(summary) {
+      const by = (summary && summary.by_type) || {};
+      const pay = (by.suspicious_payment || 0) + (by.suspicious_transaction || 0);
+      const set = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      };
+      set('fraudCountCancellations', by.excessive_cancellations || 0);
+      set('fraudCountFakePhone', by.fake_phone || 0);
+      set('fraudCountMultipleAccounts', by.multiple_accounts || 0);
+      set('fraudCountPayments', pay);
+      set('fraudCountFakeDelivery', by.fake_delivery_confirmation || 0);
+    }
+
+    async function loadFraudTab() {
+      const filterEl = document.getElementById('fraudAlertTypeFilter');
+      const filterVal = filterEl ? filterEl.value : '';
+      const url = filterVal ? `/api/admin/fraud-alerts?alert_type=${encodeURIComponent(filterVal)}` : '/api/admin/fraud-alerts';
+      const data = await fetchAPI(url);
+      
+      if (data && data.summary) {
+        updateFraudSummaryCards(data.summary);
+      }
+      
+      const body = document.getElementById('adminFraudAlertsList');
+      if (body) {
+        if (!data || !data.alerts || data.alerts.length === 0) {
+          body.innerHTML = '<tr><td colspan="8" class="text-center py-3 text-success">✓ Hakuna tahadhari za udanganyifu kwa kichujio hiki. Mfumo uko salama!</td></tr>';
+        } else {
+          body.innerHTML = data.alerts.map(a => {
+            const severityClass = a.severity === 'critical' ? 'bg-danger'
+              : a.severity === 'high' ? 'bg-warning text-dark'
+              : a.severity === 'medium' ? 'bg-info text-dark'
+              : 'bg-secondary';
+                
+            const statusClass = a.status === 'active' ? 'bg-danger'
+              : a.status === 'investigating' ? 'bg-warning text-dark'
+              : 'bg-success';
+                
+            const userLabel = a.user_type === 'farmer' ? '🧑‍🌾 Mkulima' : a.user_type === 'customer' ? '🛒 Mnunuzi' : '🚚 Msafirishaji';
+            const typeLabel = a.alert_type_label || a.alert_type;
+            
+            const actionButtons = a.status === 'active' || a.status === 'investigating'
+              ? `<div class="d-flex flex-column gap-1">
+                   <button onclick="updateFraudAlert(${a.id}, 'investigating')" class="btn btn-warning btn-sm fw-bold py-1 px-2" style="font-size:0.75rem; border-radius:6px;">Investigate</button>
+                   <button onclick="updateFraudAlert(${a.id}, 'resolved', 'suspend_user')" class="btn btn-danger btn-sm fw-bold py-1 px-2" style="font-size:0.75rem; border-radius:6px;">Suspend User</button>
+                   <button onclick="updateFraudAlert(${a.id}, 'resolved')" class="btn btn-success btn-sm fw-bold py-1 px-2" style="font-size:0.75rem; border-radius:6px;">Clear Alert</button>
+                   <button onclick="updateFraudAlert(${a.id}, 'ignored')" class="btn btn-secondary btn-sm fw-bold py-1 px-2" style="font-size:0.75rem; border-radius:6px;">Dismiss</button>
+                 </div>`
+              : `<span class="text-success fw-bold">✓ Imeshughulikiwa</span>`;
+                
+            return `
+              <tr>
+                <td class="fw-bold">#${a.id}</td>
+                <td><strong>${a.user_name || 'N/A'}</strong><br/><small class="text-muted">${userLabel}</small></td>
+                <td><a href="tel:${a.user_phone}" class="text-decoration-none fw-bold" style="color:#ffc107;">${a.user_phone || 'N/A'}</a></td>
+                <td><span class="fw-bold small">${typeLabel}</span><br/><code class="text-muted" style="font-size:0.7rem;">${a.alert_type}</code></td>
+                <td><span class="badge ${severityClass}">${a.severity}</span></td>
+                <td><div style="max-width:200px; font-size:0.85rem;">${a.description}</div></td>
+                <td><span class="badge ${statusClass}">${a.status}</span></td>
+                <td>${actionButtons}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    window.updateFraudAlert = async function(alertId, status, action = null) {
+      if (!confirm(`Je, unataka kubadili hali ya tahadhari hii kuwa '${status}'?`)) return;
+      
+      const body = { status };
+      if (action) body.action = action;
+      
+      const response = await fetch(`/api/admin/fraud-alerts/${alertId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      
+      if (response.ok) {
+        alert('Fraud alert updated successfully!');
+        loadFraudTab();
+      } else {
+        alert('Failed to update fraud alert.');
+      }
+    };
+
+    // DOM Ready Trigger
+    document.addEventListener("DOMContentLoaded", function() {
+      checkAdminAuth();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tanzania National Farmer Direct Marketplace | Soko la Wakulima</title>
+  <!-- Browser Small Icon / Favicon (NASA-Style Tab Presentation) -->
+  <link rel="icon" type="image/png" href="static/favicon.png" />
+  <link rel="shortcut icon" type="image/x-icon" href="static/favicon.ico" />
+  <meta name="description" content="Premium responsive dashboard for Tanzanian cash crops, real-time market prices, weather forecasting, cultivation tips, and interactive USSD simulator." />
+  
+  <!-- Google Fonts (Outfit & Inter) for rich typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Navbar Navigation header -->
+  <nav class="navbar" id="appNavbar">
+    <div class="nav-container">
+      <a href="#" class="logo">
+        <img src="static/logo.png" alt="Soko la Wakulima Logo" class="header-logo" />
+        <span class="brand-text">Soko la Wakulima</span>
+      </a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">☰</button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#slideshow-section" class="active">Nyumbani</a></li>
+        <li><a href="#market-prices-section">Bei za Mazao</a></li>
+        <li><a href="#weather-tips-section">Ushauri wa Kilimo</a></li>
+        <li><a href="#ussd-simulator-section">USSD Simulator</a></li>
+        <li><a href="#logistics-section">Usafirishaji</a></li>
+      </ul>
+      
+      <div class="profile-wallet-nav">
+        <!-- Wallet Badge -->
+        <div class="wallet-badge" id="navWalletBadge" title="Virtual Wallet Balance">
+          💳 Salio: <strong id="navWalletBalance">120,000</strong> TZS
+        </div>
+
+        <!-- Persona Switcher -->
+        <div class="persona-switcher-wrapper">
+          <button class="persona-btn" id="personaSwitchBtn" onclick="togglePersonaDropdown()">
+            👤 <span id="currentPersonaName">Juma Moshi (Farmer)</span>
+          </button>
+          <div class="persona-dropdown" id="personaDropdown">
+            <div class="persona-option active" onclick="selectPersona(1, 'farmer', 'Juma Moshi', '+255712345678', 120000)">
+              <strong>Juma Moshi (Mkulima)</strong>
+              <span>Simu: +255712345678 • Salio: 120,000 TZS</span>
+            </div>
+            <div class="persona-option" onclick="selectPersona(2, 'customer', 'Neema Shayo', '+255700000002', 450000)">
+              <strong>Neema Shayo (Mnunuzi)</strong>
+              <span>Simu: +255700000002 • Salio: 450,000 TZS</span>
+            </div>
+            <div class="persona-option" onclick="selectPersona(3, 'transporter', 'Hamis Bakari', '+255700000003', 25000)">
+              <strong>Hamis Bakari (Msafirishaji)</strong>
+              <span>Simu: +255700000003 • Salio: 25,000 TZS</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dark Mode Toggle -->
+        <div class="theme-switch-container">
+          <label class="theme-switch" for="checkboxTheme">
+            <input type="checkbox" id="checkboxTheme" onchange="toggleDarkMode()" />
+            <span class="slider">
+              <span class="icon-sun">☀️</span>
+              <span class="icon-moon">🌙</span>
+            </span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+  <main class="main-wrapper">
+    <!-- PART 1: HERO & AGRICULTURAL SLIDESHOW -->
+    <section class="hero-slideshow-container" id="slideshow-section">
+      <div class="slideshow" id="heroSlideshow">
+        
+        <!-- Slide 1: Tractor in farm -->
+        <div class="slide is-active" style="background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.6)), url('static/images/slide1.png');">
+          <div class="slide-overlay">
+            <span class="slide-region">📍 Tanzania • Teknolojia ya Shamba</span>
+            <h2 class="slide-title">🚜 Trakta na Zana za Kisasa</h2>
+            <p class="slide-desc">Kuongeza tija kupitia mashine, usimamizi wa kilimo, na huduma za Agrovet zinazokaribia shambani.</p>
+            <div class="slide-badge">Agro-Tech</div>
+          </div>
+        </div>
+
+        <!-- Slide 2: Tanzanian farmers harvesting crops -->
+        <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.6)), url('static/images/slide2.png');">
+          <div class="slide-overlay">
+            <span class="slide-region">📍 Wakulima • Mavuno ya Kwanza</span>
+            <h2 class="slide-title">🧑‍🌾 Mavuno kwa Wakulima</h2>
+            <p class="slide-desc">Kutoka shambani hadi sokoni: mavuno safi, uzalishaji ulioboreshwa, na uhusiano wa moja kwa moja na wateja.</p>
+            <div class="slide-badge">Mavuno</div>
+          </div>
+        </div>
+
+        <!-- Slide 3: Transport vehicles carrying crops -->
+        <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.6)), url('static/images/slide3.png');">
+          <div class="slide-overlay">
+            <span class="slide-region">📍 Logistics • Usafirishaji</span>
+            <h2 class="slide-title">🚚 Wenyeji wa Usafirishaji</h2>
+            <p class="slide-desc">Magari yakipeleka mazao kwa wakati—punguza upotevu, ongeza ubora, harakisha mauzo.</p>
+            <div class="slide-badge">Soko Haraka</div>
+          </div>
+        </div>
+
+        <!-- Slide 4: Waterfalls and valleys -->
+        <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.6)), url('static/images/slide4.png');">
+          <div class="slide-overlay">
+            <span class="slide-region">📍 Maporomoko & Mabonde</span>
+            <h2 class="slide-title">🌊 Maji, Rutuba & Mavuno</h2>
+            <p class="slide-desc">Mazingira yenye mvua and mabonde ya rutuba huongeza uwezo wa kilimo na faida kwa wakulima.</p>
+            <div class="slide-badge">Asili</div>
+          </div>
+        </div>
+
+        <!-- Slide 5: Agrovet tools and machines -->
+        <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.6)), url('static/images/slide5.png');">
+          <div class="slide-overlay">
+            <span class="slide-region">📍 Agrovet • Zana & Mbegu</span>
+            <h2 class="slide-title">🧰 Vifaa vya Shamba & Ubora</h2>
+            <p class="slide-desc">Pata taarifa, vifaa, na ushauri wa kilimo—kwa uamuzi sahihi kuanzia mwanzo hadi uvunaji.</p>
+            <div class="slide-badge">Ushauri</div>
+          </div>
+        </div>
+
+        <!-- Slide 6: Different cash crops from Tanzania regions -->
+        <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.6)), url('static/images/slide6.png');">
+          <div class="slide-overlay">
+            <span class="slide-region">📍 Korosho • Pamba • Katani • Kahawa</span>
+            <h2 class="slide-title">🌱 Mazao ya Biashara ya Tanzania</h2>
+            <p class="slide-desc">Unganisha masoko kwa mazao maarufu—kwa bei wazi, utabiri wa hali ya hewa, na msaada wa usajili.</p>
+            <div class="slide-badge">Cash Crops</div>
+          </div>
+        </div>
+
+
+        <!-- Slideshow Navigation Controls -->
+        <button class="slideshow-btn prev-btn" id="prevSlideBtn" aria-label="Slide iliyopita">‹</button>
+        <button class="slideshow-btn next-btn" id="nextSlideBtn" aria-label="Slide ijayo">›</button>
+
+        <!-- Dots indicators -->
+        <div class="slideshow-dots" id="slideshowDots"></div>
+      </div>
+    </section>
+
+    <!-- PART 2: MIDDLE (TRENDING CROPS, WEATHER, SUITABILITY, USSD SIMULATOR) -->
+    <section class="middle-dashboard">
+      <div class="dashboard-grid">
+        
+        <!-- COLUMN 1: TRENDING CASH CROPS & LIVE PRICES -->
+        <div class="dashboard-card" id="market-prices-section">
+          <div class="card-header">
+            <h3>📈 Bei za Mazao ya Biashara</h3>
+            <span class="pulse-icon" title="Real-time data active"></span>
+          </div>
+          <p class="card-sub">Bei ya wastani ya kila kilo (TZS) katika mikoa ya Tanzania. Sasisho la hivi punde.</p>
+          
+          <div class="filter-wrapper">
+            <label for="regionFilter">📍 Chagua Mkoa:</label>
+            <select id="regionFilter">
+              <option value="all">Mikoa Yote</option>
+              <option value="Kilimanjaro">Kilimanjaro</option>
+              <option value="Mtwara">Mtwara</option>
+              <option value="Arusha">Arusha</option>
+              <option value="Tanga">Tanga</option>
+              <option value="Mbeya">Mbeya</option>
+              <option value="Shinyanga">Shinyanga</option>
+              <option value="Zanzibar">Zanzibar</option>
+            </select>
+          </div>
+
+          <div class="price-list" id="realtimePricesList">
+            <!-- Dynamic price rows will be inserted here by script.js -->
+            <div class="price-loader">Inapakia bei za soko...</div>
+          </div>
+
+          <div class="market-alert-box">
+            <strong>📢 Angalizo la Soko:</strong>
+            <p id="marketTrendMessage">Inapima mwelekeo wa soko la kitaifa...</p>
+          </div>
+        </div>
+
+        <!-- COLUMN 2: CULTIVATION TIPS & WEATHER FORECASTING -->
+        <div class="dashboard-card" id="weather-tips-section">
+          <div class="card-header">
+            <h3>🌦️ Hali ya Hewa & Ushauri</h3>
+          </div>
+          <p class="card-sub">Chagua wilaya yako kupokea utabiri na maelekezo ya kupanda kwa wakati huu.</p>
+
+          <div class="forecast-selectors">
+            <select id="weatherRegion">
+              <option value="Arusha">Arusha</option>
+              <option value="Mwanza">Mwanza</option>
+              <option value="Kilimanjaro">Kilimanjaro</option>
+              <option value="Dodoma">Dodoma</option>
+              <option value="Mbeya">Mbeya</option>
+              <option value="Morogoro">Morogoro</option>
+              <option value="Tanga">Tanga</option>
+            </select>
+            <select id="weatherDistrict">
+              <!-- Districts populated dynamically by script.js -->
+            </select>
+          </div>
+
+          <!-- Weather Info Display -->
+          <div class="weather-display" id="weatherDisplayBox">
+            <div class="weather-main">
+              <span class="weather-icon" id="wIcon">☀️</span>
+              <div>
+                <h4 id="wTemp">28°C</h4>
+                <p id="wCond">Sunny (Kavu)</p>
+              </div>
+            </div>
+            <div class="weather-meta">
+              <span>💧 Mvua: <strong id="wRain">0mm</strong></span>
+              <span>💦 Unyevu: <strong id="wHumidity">45%</strong></span>
+            </div>
+          </div>
+
+          <!-- Temperature Suitability Output -->
+          <div class="suitability-box" id="suitabilityBox">
+            <h4>🌡️ Ushauri wa Kupanda (Kulingana na Joto)</h4>
+            <p id="suitabilityText">Inachambua joto linalofaa...</p>
+          </div>
+
+          <!-- Tips Section -->
+          <div class="tips-box">
+            <h4>💡 Mbinu za Kilimo Smart</h4>
+            <ul class="tips-list" id="cultivationTipsList">
+              <li>💧 Kumwagilia asubuhi na jioni kupunguza mvuke wakati wa joto kali.</li>
+              <li>🌱 Weka matandazo (mulching) ili kuhifadhi unyevu kwenye udongo.</li>
+              <li>🚫 Epuka kuweka mbolea ya chumvi wakati wa kiangazi bila maji ya kutosha.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- COLUMN 3: INTERACTIVE USSD GATEWAY SIMULATOR -->
+        <div class="dashboard-card interactive-simulator" id="ussd-simulator-section">
+          <div class="card-header">
+            <h3>📱 USSD Simulator Console</h3>
+            <span class="badge-online">V2.4 Active</span>
+          </div>
+          <p class="card-sub">Simulate na ujaribu mfumo wetu wa Swahili USSD (*384*1234#) moja kwa moja kwenye kivinjari chako.</p>
+
+          <div class="phone-wrapper">
+            <div class="phone-case">
+              <div class="phone-screen">
+                <div class="phone-header">
+                  <span class="time">12:00</span>
+                  <span class="icons">📶 🔋 100%</span>
+                </div>
+                
+                <!-- Phone screen main output area -->
+                <div class="screen-body" id="ussdScreenContent">
+                  <div class="ussd-dialer-view" id="dialerView">
+                    <p class="dialer-label">Piga namba ya USSD:</p>
+                    <input type="text" id="ussdDialInput" value="*384*1234#" readonly />
+                    <button class="btn btn-dial" id="dialBtn">📞 Piga (Dial)</button>
+                  </div>
+                  
+                  <div class="ussd-menu-view hidden" id="menuView">
+                    <pre class="ussd-text" id="ussdOutputText">Inapakia...</pre>
+                    <div class="ussd-input-group">
+                      <input type="text" id="ussdResponseInput" placeholder="Ingiza chaguo hapa..." autofocus />
+                      <div class="ussd-actions">
+                        <button class="btn btn-ussd-cancel" id="cancelUssdBtn">Batilisha</button>
+                        <button class="btn btn-ussd-send" id="sendUssdBtn">Tuma</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="phone-footer">
+                  <div class="home-button" id="phoneHomeBtn"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="simulator-meta">
+            <small>⚠️ Hii inasaka data ya kweli ya usajili, bei za soko, na hali ya hewa kutoka kwenye mfumo wetu wa database.</small>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PART 2.5: LOGISTICS & ESCROW SERVICES -->
+    <section class="middle-dashboard" id="logistics-section" style="margin-top: 1.5rem;">
+      <div class="dashboard-grid" style="grid-template-columns: 2fr 1.2fr;">
+        
+        <!-- CARD 1: TRANSPORTERS MANAGEMENT -->
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h3>🚚 Wasafirishaji wa Mazao (Logistics Management)</h3>
+            <button class="btn btn-dial" id="openTpRegBtn" style="width: auto; padding: 0.4rem 1rem;" onclick="showTpRegModal()">Sajili Msafirishaji</button>
+          </div>
+          <p class="card-sub">Orodha ya wasafirishaji waliosajiliwa nchini Tanzania wanaosaidia kufikisha mazao shambani hadi kwa mnunuzi.</p>
+          
+          <div class="transporters-list" id="transportersList">
+            <div class="price-loader">Inapakia wasafirishaji...</div>
+          </div>
+        </div>
+
+        <!-- CARD 2: ESCROW MONITOR -->
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h3>🔒 Escrow & Wallet Monitor</h3>
+          </div>
+          <p class="card-sub">Fuatilia mikataba ya fedha iliyoshikiliwa salama wakati mazao yanapogawiwa na kusafirishwa.</p>
+          
+          <div class="escrow-advisory-box" id="escrowMonitorBox">
+            <h4>🛡️ Active Escrow Contracts</h4>
+            <div class="escrow-list" id="activeEscrowList">
+              <div class="price-loader">Hakuna mikataba ya escrow kwa sasa.</div>
+            </div>
+            
+            <div class="market-alert-box" style="margin-top: 10px; background: rgba(76,175,80,0.08); border-left-color: var(--primary-light);">
+              <strong>💡 Escrow Information:</strong>
+              <p style="color: var(--primary-accent); font-size: 0.78rem;">Piga Malipo ya Escrow au Thibitisha Kupokea kupitia USSD Simulator kuona mabadiliko hapa!</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+
+  <!-- PART 3: STANDARD FOOTER -->
+  <footer class="main-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <h4>🌾 Soko la Wakulima</h4>
+        <p>Kuunganisha wakulima wa Tanzania na soko bila dalali. Piga huduma yetu ya USSD wakati wowote.</p>
+        <span class="footer-ussd">*384*1234#</span>
+      </div>
+      <div class="footer-links">
+        <h5>Viungo vya Haraka</h5>
+        <ul>
+          <li><a href="#slideshow-section">Nyumbani</a></li>
+          <li><a href="#market-prices-section">Mazao Sokoni</a></li>
+          <li><a href="#logistics-section">Wanunuzi Waliosajiliwa</a></li>
+          <li><a href="#weather-tips-section">Utabiri wa Hali ya Hewa</a></li>
+          <li><a href="#market-prices-section">Bei za Masoko</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h5>Rasilimali za Kilimo</h5>
+        <ul>
+          <li><a href="#">Miongozo ya Kilimo Bora</a></li>
+          <li><a href="#ussd-simulator-section">Huduma ya USSD (*384*1234#)</a></li>
+          <li><a href="https://www.kilimo.go.tz" target="_blank" rel="noopener noreferrer">Wizara ya Kilimo</a></li>
+          <li><a href="https://www.meteo.go.tz" target="_blank" rel="noopener noreferrer">Mamlaka ya Hali ya Hewa (TMA)</a></li>
+          <li><a href="#footer-contact">Wasiliana Nasi</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact" id="footer-contact">
+        <h5>Mawasiliano</h5>
+        <p>Simu: +255 757 877 587</p>
+        <p>Barua Pepe: info@sokolawakulima.go.tz</p>
+        <p>Morogoro, Tanzania</p>
+
+        <div class="footer-social" aria-label="Social Media">
+          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-bottom-left">
+        &copy; 2026 Soko la Wakulima. Haki zote zimehifadhiwa.
+      </div>
+      <div class="footer-bottom-center">
+        <span class="footer-bottom-center-text">The Website is Designed, Developed and Maintained by  Alharith Co.</span>
+      </div>
+      <div class="footer-bottom-right">
+        Imesanifiwa kwaajili ya Kilimo Kwanza
+      </div>
+    </div>
+  </footer>
+
+  <!-- SVG CHART MODAL -->
+  <div class="glass-modal-backdrop" id="svgChartModal" onclick="closeSvgChartModalOnBackdrop(event)">
+    <div class="glass-modal-card" style="max-width: 580px;">
+      <button class="modal-close-btn" onclick="closeSvgChartModal()">×</button>
+      <h3 class="modal-title" id="svgChartTitle">📈 Historia ya Bei</h3>
+      <p class="modal-subtitle" id="svgChartSubtitle">Bei za soko la kikanda kwa kilo moja katika siku 7 zilizopita.</p>
+      
+      <div class="svg-chart-container">
+        <div class="chart-tooltip" id="chartTooltip"></div>
+        <svg id="trendSvg" width="100%" height="100%" viewBox="0 0 500 220" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--primary-light)" />
+              <stop offset="100%" stop-color="var(--primary-light)" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:0.78rem; color:var(--text-muted); font-weight:700;">
+        <span>📅 Siku 7 zilizopita</span>
+        <span style="color:var(--primary-light);">Zao Lililochaguliwa la Kitaifa</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANSPORTER REGISTRATION MODAL -->
+  <div class="glass-modal-backdrop" id="tpRegModal" onclick="closeTpRegModalOnBackdrop(event)">
+    <div class="glass-modal-card">
+      <button class="modal-close-btn" onclick="closeTpRegModal()">×</button>
+      <h3 class="modal-title">🚚 Sajili Msafirishaji Mpya</h3>
+      <p class="modal-subtitle">Sajili gari la usafirishaji kupokea na kusambaza mazao ya kilimo kutoka shambani.</p>
+      
+      <form class="premium-form" id="tpRegForm" onsubmit="handleTpRegSubmit(event)">
+        <div class="form-row">
+          <div>
+            <label for="tpFirstName">Jina la Kwanza</label>
+            <input type="text" id="tpFirstName" placeholder="Mfano: Hamis" required />
+          </div>
+          <div>
+            <label for="tpLastName">Jina la Mwisho</label>
+            <input type="text" id="tpLastName" placeholder="Mfano: Bakari" required />
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div>
+            <label for="tpPhone">Namba ya Simu</label>
+            <input type="tel" id="tpPhone" placeholder="Mfano: +255700000003" required />
+          </div>
+          <div>
+            <label for="tpLicense">Namba ya Gari (License Plate)</label>
+            <input type="text" id="tpLicense" placeholder="Mfano: T 123 ABC" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label for="tpVehicle">Aina ya Gari</label>
+            <select id="tpVehicle" required>
+              <option value="Fuso Truck">Fuso Truck (Tani 10)</option>
+              <option value="Pickup Truck">Pickup Truck (Tani 2)</option>
+              <option value="Canter Truck">Canter Truck (Tani 4)</option>
+              <option value="Tractor Cargo">Tractor Cargo (Shamba)</option>
+            </select>
+          </div>
+          <div>
+            <label for="tpRegion">Mkoa wa Kazi</label>
+            <select id="tpRegion" required>
+              <option value="Mtwara">Mtwara</option>
+              <option value="Kilimanjaro">Kilimanjaro</option>
+              <option value="Arusha">Arusha</option>
+              <option value="Dodoma">Dodoma</option>
+              <option value="Tanga">Tanga</option>
+              <option value="Mbeya">Mbeya</option>
+              <option value="Shinyanga">Shinyanga</option>
+            </select>
+          </div>
+        </div>
+        
+        <div>
+          <label for="tpDistrict">Wilaya</label>
+          <input type="text" id="tpDistrict" placeholder="Mfano: Moshi Mjini" required />
+        </div>
+
+        <div class="error-alert hidden" id="tpRegError" style="margin-top:8px; padding:8px; border-radius:6px; background:rgba(211,47,47,0.1); color:var(--danger); font-size:0.8rem; font-weight:600;"></div>
+        <div class="success-alert hidden" id="tpRegSuccess" style="margin-top:8px; padding:8px; border-radius:6px; background:rgba(76,175,80,0.1); color:var(--primary); font-size:0.8rem; font-weight:600;"></div>
+
+        <button type="submit" class="btn-submit-premium">Sajili Msafirishaji</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MOBILE MONEY PUSH SIMULATOR MODAL -->
+  <div class="glass-modal-backdrop" id="pushPromptModal" onclick="closePushPromptModalOnBackdrop(event)">
+    <div class="glass-modal-card" style="max-width: 380px; padding: 2rem;">
+      <button class="modal-close-btn" onclick="closePushPromptModal()">×</button>
+      <h3 class="modal-title" style="justify-content:center; text-align:center;">🔴 Virtual M-Pesa Push Alert</h3>
+      <p class="modal-subtitle" style="text-align:center; margin-bottom:1rem;">Uhakiki wa Malipo ya Mtandao ya Kielektroniki.</p>
+      
+      <div class="phone-push-prompt">
+        <div class="push-icon">📱</div>
+        <p style="font-size:0.88rem; color:var(--text-dark); line-height:1.4; font-weight:550;" id="pushPromptMessage">
+          Tafadhali ingiza PIN yako ya Vodacom M-Pesa kuidhinisha malipo.
+        </p>
+        
+        <div class="push-pin-input-group">
+          <label for="pushPinField" style="font-size:0.75rem; font-weight:bold; text-transform:uppercase; color:var(--text-muted); margin-bottom: 4px;">Enter 4-Digit M-Pesa PIN</label>
+          <input type="password" id="pushPinField" maxlength="4" placeholder="••••" style="letter-spacing:12px; font-family:monospace; font-size:1.8rem; font-weight:bold; text-align:center; width:160px; padding:6px 12px; border-radius:10px; border:2px solid var(--primary-light); outline:none; background:white; color:#111;" />
+        </div>
+
+        <div class="push-details">
+          🔐 Mfumo salama wa miamala ya benki ya simu (virtual sandbox).
+        </div>
+
+        <button class="btn btn-dial" style="width:100%; padding:0.65rem;" onclick="confirmPushPayment()">Idhinisha Malipo (Authorize)</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
